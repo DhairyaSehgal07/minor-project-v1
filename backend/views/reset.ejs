@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+</head>
+
+<body>
+    <h1>Reset Password</h1>
+    <form id="reset-password-form">
+        <div>
+            <label for="new-password">Enter New Password:</label>
+            <input type="password" id="new-password" name="newPassword" required>
+        </div>
+        <div>
+            <label for="confirm-password">Confirm Password:</label>
+            <input type="password" id="confirm-password" name="confirmPassword" required>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        const pathUrl = window.location.toString();
+
+        function validatePasswords() {
+            var newPassword = document.getElementById("new-password").value;
+            var confirmPassword = document.getElementById("confirm-password").value;
+
+            if (newPassword !== confirmPassword) {
+                alert("Passwords do not match. Please try again.");
+                document.getElementById("new-password").value = "";
+                document.getElementById("confirm-password").value = "";
+                return false;
+            }
+            return true;
+        }
+
+        document.getElementById("reset-password-form").addEventListener("submit", function (event) {
+            event.preventDefault();
+            if (validatePasswords()) {
+                var newPassword = document.getElementById("new-password").value;
+                fetch(`${pathUrl}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        newPassword: newPassword
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = 'api/users/reset-password/success'; // Redirect to success page
+                    } else {
+                        alert("could not update password, please try again ")
+                    }
+                }).catch(error => {
+                    console.error('Error:', error);
+                    alert(error.message)
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>
